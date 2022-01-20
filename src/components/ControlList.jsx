@@ -1,11 +1,16 @@
 import Control from "./Control";
 
-const ControlList = ({ controls }) => {
+const ControlList = ({ controls, handleControlButton }) => {
     return (
         <ul>
             {controls && controls.map((item, index) => 
-                <li key={ index }>
-                    <Control title={item[0]} id={item[1]} />
+                <li key={index}>
+                    <Control 
+                        title={item.title} 
+                        id={item.id} 
+                        handleControlButton={handleControlButton} 
+                        complete={item.complete} 
+                    />
                 </li>
             )}
         </ul>
