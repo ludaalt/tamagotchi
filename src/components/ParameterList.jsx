@@ -5,7 +5,7 @@ const ParameterList = ({ params }) => {
         <ul>
             {params && params.map((item, index) => 
                 <li key={index}>
-                    <Parameter title={item[0]} id={item[1]} value={50}/>
+                    <Parameter title={item.title} id={item.id} value={item.value}/>
                 </li>
             )}
         </ul>
