@@ -21,11 +21,16 @@ const ControlButton = styled.button`
         : props.id === 'drink' ? '#3498DB' 
         : props.id === 'relax' ? '#E67E22' 
         : '#95A5A6'};
+    
+    &:disabled {
+        cursor: default;
+        opacity: 0.6;
+    }
 `
 
-const Control = ({ title, id }) => {
+const Control = ({ title, id, complete, handleControlButton }) => {
     return (
-        <ControlButton id={id}>{title}</ControlButton>
+        <ControlButton id={id} disabled={complete ? 'disabled' : null} onClick={() => handleControlButton(id)}>{title}</ControlButton>
     )
 }
 
