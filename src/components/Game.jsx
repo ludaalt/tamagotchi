@@ -24,6 +24,12 @@ const GameContainer = styled.div`
         *:hover {
             opacity: 0.9;
             transform: scale(1.01);
+
+            &:disabled {
+                cursor: default;
+                opacity: 0.6;
+                transform: scale(1);
+            }
         }
     }
 `
@@ -37,7 +43,7 @@ const Game = () => {
         {id: 'fatigue', title: 'Усталость', value: 50}
     ]
 
-    const controls = [
+    const initControls = [
         {id: 'eat', title: 'Есть', complete: false},
         {id: 'drink', title: 'Пить', complete: false},
         {id: 'relax', title: 'Отдохнуть', complete: false},
@@ -45,44 +51,81 @@ const Game = () => {
     ]
 
     const [params, setParams] = useState(initParams);
-    // const [controls, setControls] = useState(initControls);
+    const [controls, setControls] = useState(initControls);
+
+    const correctParam = (arr, id, value) => {
+        for (let i = 0; i < arr.length; i += 1) {
+            if(arr[i].id === id) {
+                if (arr[i].value + value <= 100 && arr[i].value + value >= 0) {
+                    arr[i].value += value
+                } else if(arr[i].value + value > 100) {
+                    arr[i].value = 100
+                }
+            }
+        }
+    }
 
     const handleControlButton = (id) => {   
         let newParams = [...params];
-        // let newControls = [...controls];
 
-        id === 'eat' && newParams.map(item => item.id === 'hunger' && item.value < 100 ? item.value += 10 
-        : item.id === 'hunger' && item.value === 100 ? alert('Я наелся!')
-        : item.id === 'health' && item.value < 100 ? item.value += 1 
-        : item.id === 'health' && item.value === 100 ? alert('Я совершенно здоров!') 
-        : null) 
+        if (id === 'eat') {
+            correctParam(newParams, 'hunger', 10)
+            correctParam(newParams, 'health', 1)
+        }
 
-        id === 'drink' && newParams.map(item => item.id === 'thirst' && item.value < 100 ? item.value += 10 
-        : item.id === 'thirst' && item.value === 100 ? alert('Я напился!')
-        : item.id === 'health' && item.value < 100 ? item.value += 1 
-        : item.id === 'health' && item.value === 100 ? alert('Я совершенно здоров!') 
-        : null) 
+        if (id === 'drink') {
+            correctParam(newParams, 'thirst', 10)
+            correctParam(newParams, 'health', 1)
+        }
 
-        id === 'play' && newParams.map(item => item.id === 'thirst' && item.value > 30 ? item.value -= 30 
-        : item.id === 'thirst' && item.value < 30 ? alert('Хочу пить')
-        : item.id === 'hunger' && item.value > 10 ? item.value -= 10 
-        : item.id === 'hunger' && item.value < 10 ? alert('Хочу есть') 
-        : null) 
-        
+        if (id === 'relax') {
+            correctParam(newParams, 'fatigue', 10)
+            correctParam(newParams, 'thirst', -1)
+            correctParam(newParams, 'hunger', -1)
+        }
 
-        
+        if (id === 'play') {
+            correctParam(newParams, 'thirst', -20)
+            correctParam(newParams, 'hunger', -10)
+        }
+                
         setParams(newParams);
-        // setControls(newControls);
     }
 
-    // useEffect(() => {
-    //     params.forEach((item) => {
-    //         if(item.id === 'thirst' && item.value > 100) alert('Я напился!') 
-    //     })
+    useEffect(() => {
+        let newControls = [...controls];
+        for(let i = 0; i < params.length; i += 1) {
+            for (let j = 0; j < newControls.length; j += 1) {
+                if (params[i].value >= 100 && params[i].id === 'hunger' && newControls[j].id === 'eat') {
+                    newControls[j].complete = true 
+                } 
 
-    // }, [params])
-    
+                if (params[i].value < 100 && params[i].id === 'hunger' && newControls[j].id === 'eat') {
+                    newControls[j].complete = false 
+                }
 
+
+
+                if (params[i].value >= 100 && params[i].id === 'thirst' && newControls[j].id === 'drink') {
+                    newControls[j].complete = true 
+                } 
+
+                if (params[i].value < 100 && params[i].id === 'thirst' && newControls[j].id === 'drink') {
+                    newControls[j].complete = false 
+                }
+
+                if (params[i].value >= 100 && params[i].id === 'fatigue' && newControls[j].id === 'relax') {
+                    newControls[j].complete = true 
+                } 
+
+                if (params[i].value < 100 && params[i].id === 'fatigue' && newControls[j].id === 'relax') {
+                    newControls[j].complete = false 
+                }
+                
+            }
+        }
+        setControls(newControls);
+    }, [params])
 
     return (
         <GameContainer>
